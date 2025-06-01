@@ -1,0 +1,61 @@
+[colors]
+draw_bold_text_with_bright_colors = false
+
+[colors.bright]
+black = "{{ (datasource "variables").alacritty.bright_black }}"
+blue = "{{ (datasource "variables").alacritty.bright_blue }}"
+cyan = "{{ (datasource "variables").alacritty.bright_cyan }}"
+green = "{{ (datasource "variables").alacritty.bright_green }}"
+magenta = "{{ (datasource "variables").alacritty.bright_magenta }}"
+red = "{{ (datasource "variables").alacritty.bright_red }}"
+white = "{{ (datasource "variables").alacritty.bright_white }}"
+yellow = "{{ (datasource "variables").alacritty.bright_yellow }}"
+
+[colors.normal]
+black = "{{ (datasource "variables").alacritty.normal_black }}"
+blue = "{{ (datasource "variables").alacritty.normal_blue }}"
+cyan = "{{ (datasource "variables").alacritty.normal_cyan }}"
+green = "{{ (datasource "variables").alacritty.normal_green }}"
+magenta = "{{ (datasource "variables").alacritty.normal_magenta }}"
+red = "{{ (datasource "variables").alacritty.normal_red }}"
+white = "{{ (datasource "variables").alacritty.normal_white }}"
+yellow = "{{ (datasource "variables").alacritty.normal_yellow }}"
+
+[colors.primary]
+background = "{{ (datasource "variables").alacritty.primary_background }}"
+foreground = "{{ (datasource "variables").alacritty.primary_foreground }}"
+
+[env]
+TERM = "xterm-256color"
+
+[font]
+size = {{ (datasource "variables").alacritty.font_size }}
+
+[font.bold]
+family = "{{ (datasource "variables").alacritty.font_bold }}"
+style = "Bold"
+
+[font.italic]
+family = "{{ (datasource "variables").alacritty.font_italic }}"
+style = "Italic"
+
+[font.normal]
+family = "{{ (datasource "variables").alacritty.font_normal }}"
+style = "Regular"
+
+[font.offset]
+x = 0
+y = 0
+
+[scrolling]
+history = 10000
+multiplier = 3
+
+[window]
+decorations = "full"
+startup_mode = "Windowed"
+title = "Alacritty"
+
+[window.padding]
+x = {{ (datasource "variables").alacritty.window_padding }}
+y = {{ (datasource "variables").alacritty.window_padding }}

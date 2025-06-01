@@ -1,0 +1,9 @@
+// Theme path
+{{define "theme_template" -}}
+@theme "{{ . }}"
+{{- end -}}
+
+{{ $theme := (datasource "variables").rofi.theme }}
+{{- if $theme -}}
+  {{ template "theme_template" $theme }}
+{{- end }}

@@ -1,2 +1,3 @@
-# arch-linux
-Repository for arch linux installation automatization
+# Arch Installer
+
+Arch Linux installation.

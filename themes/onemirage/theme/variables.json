@@ -1,0 +1,75 @@
+{
+    "nvim": {
+        "theme": "'ayu-theme/ayu-vim'",
+        "colorscheme": "ayu",
+        "palette": "let ayucolor=\"mirage\"",
+        "lualine_theme": "dracula"
+    },
+    "dunst": {
+        "font": "Input Nerd Font 9",
+        "corner_radius": 5,
+        "transparency": 0,
+        "padding": 6,
+        "horizontal_padding": 6,
+        "separator_color": "frame",
+        "frame_width": 3,
+        "frame_color": "#8EC07C",
+        "low_frame_color": "#6b98c4",
+        "low_foreground": "#b8bec6",
+        "low_background": "#1f2430",
+        "normal_frame_color": "#95be6d",
+        "normal_foreground": "#b8bec6",
+        "normal_background": "#1f2430",
+        "critical_frame_color": "#d86d58",
+        "critical_foreground": "#b8bec6",
+        "critical_background": "#1f2430"
+    },
+    "picom": {
+        "frame_opacity": 1.0
+    },
+    "alacritty": {
+        "bright_black": "#686868",
+        "bright_blue": "#65bddb",
+        "bright_cyan": "#9debcf",
+        "bright_green": "#58c49c",
+        "bright_magenta": "#f17676",
+        "bright_red": "#f58c7d",
+        "bright_white": "#ffffff",
+        "bright_yellow": "#ffd165",
+        "normal_black": "#212733",
+        "normal_blue": "#60b8d6",
+        "normal_cyan": "#98e6ca",
+        "normal_green": "#53bf97",
+        "normal_magenta": "#ec7171",
+        "normal_red": "#f08778",
+        "normal_white": "#fafafa",
+        "normal_yellow": "#fdcc60",
+        "primary_background": "#1f2430",
+        "primary_foreground": "#cbccc6",
+        "font_size": 9.0,
+        "font_bold": "Input Nerd Font",
+        "font_italic": "Input Nerd Font",
+        "font_normal": "Input Nerd Font",
+        "window_padding": 13
+    },
+    "rofi": {
+        "theme": "themes/default"
+    },
+    "i3": {
+        "font": "Input Nerd Font 9",
+        "gaps_inner": 3,
+        "gaps_outer": 3
+    },
+    "qutebrowser": {
+        "theme": "config.source('themes/dracula.py')"
+    },
+    "i3lock": {
+        "theme": "$HOME/.config/i3lock/blur/lock.sh"
+    },
+    "zsh": {
+        "theme": "spaceship"
+    },
+    "lightdm": {
+        "font": "Iosevka Nerd Font 10"
+    }
+}

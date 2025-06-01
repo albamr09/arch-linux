@@ -1,0 +1,8 @@
+# class                 border  backgr. text    indicator child_border
+client.focused          #4a3d70 #282433 #ffffff #4a3d70   #4a3d70
+client.focused_inactive #282433 #282433 #555066 #282433   #282433
+client.unfocused        #221c28 #221c28 #555066 #221c28   #221c28
+client.urgent           #e965a5 #e965a5 #ffffff #e965a5   #e965a5
+
+# Polybar
+exec_always --no-startup-id /home/alba/.config/polybar/launch.sh &
