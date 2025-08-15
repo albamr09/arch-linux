@@ -5,7 +5,7 @@
     "lualine_theme": "dracula"
   },
   "dunst": {
-    "font": "Blex Mono Nerd Font 9",
+    "font": "JetBrainsMono Nerd Font 9",
     "corner_radius": 1,
     "transparency": 0,
     "padding": 6,
