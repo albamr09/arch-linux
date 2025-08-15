@@ -11,21 +11,6 @@
 "---------------------------------------------------------------
 
 
-" --------------- ] Autocomplete [  --------------- 
-
-let g:coc_global_extensions = [
-\ 'coc-snippets',
-\ 'coc-pairs',
-\ 'coc-python',
-\ 'coc-clangd',
-\ 'coc-java',
-\ 'coc-json',
-\	'coc-css', 
-\ 'coc-html', 
-\ 'coc-tsserver',
-\ 'coc-eslint'
-\]
-
 " --------------- ] File Explorer [  --------------- 
 
 let g:NERDTreeShowHidden = 1
