@@ -196,23 +196,21 @@ local on_attach = function(_, bufnr)
 	end, { desc = "Format current buffer with LSP" })
 end
 
--- Use a loop to conveniently install and call 'setup' on multiple servers and
--- map buffer local keybindings when the language server attaches
 require('mason').setup()
 local mason_lspconfig = require('mason-lspconfig');
+local lspconfig = require("lspconfig")
 mason_lspconfig.setup({
-	ensure_installed = vim.tbl_keys(servers),
+  ensure_installed = vim.tbl_keys(servers),
 })
 
-mason_lspconfig.setup_handlers({
-	function(server_name)
-		require("lspconfig")[server_name].setup({
-			capabilities = capabilities,
-			on_attach = on_attach,
-			settings = servers[server_name],
-		})
-	end,
-})
+-- Use a loop to conveniently install and call 'setup' on multiple servers and
+-- map buffer local keybindings when the language server attaches
+for server_name, server_opts in pairs(servers) do
+  lspconfig[server_name].setup(vim.tbl_deep_extend("force", {
+    on_attach = on_attach,
+    capabilities = capabilities,
+  }, server_opts))
+end
 EOF
 
 " -------------- ] Autocompletion [ ----------------
