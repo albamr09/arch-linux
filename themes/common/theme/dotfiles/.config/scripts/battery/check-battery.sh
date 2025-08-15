@@ -1,6 +1,12 @@
 #!/bin/bash
 
 BATTINFO=`acpi -b | sed  /"Unknown"/d`
+
+# Exit if battery reports 0% and rate info unavailable (likely phantom battery)
+if echo "$BATTINFO" | grep -q "0%, rate information unavailable"; then
+    exit 0
+fi
+
 PRINTINFO=`echo $BATTINFO | cut --fields=3,4 -d " " | awk '{ print substr( $0, 1, length($0)-1 ) }'`
 PERCERTAGE=`echo $BATTINFO | cut -f 2 -d "," | awk '{ print substr( $0, 1, length($0)-1 ) }'`
 
