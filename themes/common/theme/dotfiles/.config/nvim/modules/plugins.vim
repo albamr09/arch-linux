@@ -31,6 +31,9 @@ Plug 'windwp/nvim-autopairs'
 Plug 'nvimtools/none-ls.nvim'
 Plug 'jay-babu/mason-null-ls.nvim'
 
+" Snippet engine
+Plug 'L3MON4D3/LuaSnip'
+
 " Temas
 Plug {{ (datasource "variables").nvim.theme }}
 
