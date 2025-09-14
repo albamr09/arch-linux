@@ -29,6 +29,7 @@ Plug 'windwp/nvim-autopairs'
 
 " Linting
 Plug 'nvimtools/none-ls.nvim'
+Plug 'nvimtools/none-ls-extras.nvim'
 Plug 'jay-babu/mason-null-ls.nvim'
 
 " Snippet engine
