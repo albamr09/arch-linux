@@ -53,7 +53,7 @@ configure_nvim() {
     execute curl -fLo /home/$USER/.local/share/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
     title_msg "Installing LSP dependencies"
-    execute sudo npm install -g prettier @biomejs/biome
+    execute sudo npm install -g prettier eslint_d @biomejs/biome
 
     title_msg "Installing tree-sitter dependencies"
     # Avoid tree sitter executable errors (only for latex)

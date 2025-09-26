@@ -118,13 +118,21 @@ let g:vimtex_view_general_viewer = 'zathura'
 " -------------- ] LSP [ ----------------
 
 lua << EOF
+
+-- Utility to detect project config
+local function has_file(patterns)
+  for _, pattern in ipairs(patterns) do
+    if vim.fn.glob(pattern) ~= "" then
+      return true
+    end
+  end
+  return false
+end
+
 local servers = {
   -- Python
 	pyright = {},
-  -- TS/JS/TSX/JSX
-  biome = {
-    cmd = { "biome", "lsp-proxy" },
-  },
+  -- TS/JS
   ts_ls = {},
   -- Bash
 	bashls = {},
@@ -137,6 +145,47 @@ local servers = {
   -- C/C++
   clangd = {},
 }
+
+-- Decide which LSP servers to attach for JS/TS based on the configuration files present on the project
+local js_servers = {}
+if has_file({ "biome.json" }) then
+  js_servers.biome = {
+    -- Allows biome to act as proxy for LSP functionality and fallback onto ts_ls (so it is important to keep ts_ls as a server)
+    -- If you do not include this lspconfig will fail when calling setup
+    cmd = { "biome", "lsp-proxy" },
+  }
+elseif has_file({ ".eslintrc.js", ".eslintrc.json", ".eslintrc.cjs", "eslint.config.js" }) then
+  js_servers.eslint = {
+		codeAction = {
+			disableRuleComment = {
+				enable = true,
+				location = "separateLine",
+			},
+			showDocumentation = {
+				enable = true,
+			},
+		},
+		codeActionOnSave = {
+			enable = false,
+			mode = "all",
+		},
+		format = false,
+		nodePath = "",
+		onIgnoredFiles = "off",
+		packageManager = "npm",
+		quiet = false,
+		rulesCustomizations = {},
+		run = "onType",
+		useESLintClass = false,
+		validate = "on",
+		workingDirectory = {
+			mode = "location",
+		},
+	}
+end
+
+-- Merge all the servers
+local lsp_servers = vim.tbl_extend("force", servers, js_servers)
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require("cmp_nvim_lsp").default_capabilities(capabilities)
@@ -183,12 +232,12 @@ require('mason').setup()
 local mason_lspconfig = require('mason-lspconfig');
 local lspconfig = require("lspconfig")
 mason_lspconfig.setup({
-  ensure_installed = vim.tbl_keys(servers),
+  ensure_installed = vim.tbl_keys(lsp_servers),
 })
 
 -- Use a loop to conveniently install and call 'setup' on multiple servers and
 -- map buffer local keybindings when the language server attaches
-for server_name, server_opts in pairs(servers) do
+for server_name, server_opts in pairs(lsp_servers) do
   lspconfig[server_name].setup(vim.tbl_deep_extend("force", {
     on_attach = on_attach,
     capabilities = capabilities,
@@ -198,16 +247,16 @@ end
 
 -- Diagnostic popups for linting errors
 vim.diagnostic.config({
-  virtual_text = false,      -- disables inline text, optional
-  signs = true,              -- keep E/W signs
-  underline = true,          -- underline problematic code
-  update_in_insert = false,  -- don't update while typing
-  severity_sort = true,      -- sort errors by severity
+  virtual_text = false,
+  signs = true,
+  underline = true,
+  severity_sort = true,
   float = {
-    source = "always",       -- show which LSP source (eslint, pyright, etc.)
-    border = "rounded",      -- rounded border for the popup
+    source = "always",
+    border = "rounded",
   },
 })
+
 -- Show diagnostic when cursor hovers over problematic section of code
 local float_win = nil
 
@@ -313,16 +362,35 @@ null_ls.setup({
 		end
 	end,
 	sources = {
-    null_ls.builtins.formatting.biome,
-    null_ls.builtins.formatting.prettier.with({
-			extra_filetypes = { "xml", "md" },
-      prefer_local = "node_modules/.bin"
-		}),
+    -- biome only if eslint is configured for project
+    null_ls.builtins.formatting.biome.with({
+        condition = function(utils)
+            return utils.root_has_file({ "biome.json" })
+        end,
+        prefer_local = "node_modules/.bin"
+    }),
+    -- eslint only if eslint is configured for project
+    require("none-ls.formatting.eslint_d").with({
+        condition = function(utils)
+            return utils.root_has_file({ ".eslintrc.js", ".eslintrc.json", ".eslintrc.cjs", "eslint.config.js" })
+        end,
+        prefer_local = "node_modules/.bin"
+    }),
+    -- Python
 		null_ls.builtins.formatting.black,
 		null_ls.builtins.formatting.djlint,
 		null_ls.builtins.formatting.isort,
 		null_ls.builtins.diagnostics.djlint,
 		null_ls.builtins.diagnostics.pylint,
+    -- Prettier
+    null_ls.builtins.formatting.prettier.with({
+			extra_filetypes = { "xml", "md" },
+      prefer_local = "node_modules/.bin",
+      -- Do not run if biome or eslint are configured
+      condition = function(utils)
+          return not utils.root_has_file({ ".eslintrc.js", ".eslintrc.json", ".eslintrc.cjs", "eslint.config.js", "biome.json" })
+      end,
+		}),
 	},
 })
 EOF
