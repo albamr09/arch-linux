@@ -91,8 +91,7 @@ set updatetime=100
 
 lua <<EOF
 require'neoscroll'.setup {
-    mappings = {'<C-u>', '<C-d>', '<C-f>',
-                '<C-y>', '<C-e>', 'zt', 'zz', 'zb'}
+    mappings = {'<C-u>', '<C-d>', '<C-f>', '<C-y>', '<C-e>', 'zt', 'zz', 'zb'}
 }
 EOF
 
@@ -118,9 +117,30 @@ let g:vimtex_view_general_viewer = 'zathura'
 " -------------- ] LSP [ ----------------
 
 lua << EOF
+
+local mason_lspconfig = require('mason-lspconfig');
+local lspconfig = require("lspconfig")
+
 local servers = {
+  -- Python
 	pyright = {},
-	eslint = {
+  -- TS/JS
+  -- We keep it here to ensure it is installed
+  ts_ls = {},
+  biome = {
+    -- Attach only to biome configuration (if this does not exist LSP does not start)
+    root_dir = function(fname)
+      return lspconfig.util.root_pattern("biome.json")(fname)
+    end,
+    -- Allows biome to act as proxy for LSP functionality and fallback onto ts_ls (so it is important to keep ts_ls as a server)
+    -- If you do not include this lspconfig will fail when calling setup
+    cmd = { "biome", "lsp-proxy" },
+  },
+  eslint = {
+    -- Attach only to eslint configuration (if this does not exist LSP does not start)
+    root_dir = function(fname)
+      return lspconfig.util.root_pattern(".eslintrc.js", ".eslintrc.json", ".eslintrc.cjs", "eslint.config.js")(fname)
+    end,
 		codeAction = {
 			disableRuleComment = {
 				enable = true,
@@ -147,11 +167,15 @@ local servers = {
 			mode = "location",
 		},
 	},
+  -- Bash
 	bashls = {},
+  -- CSS
 	cssls = {},
+  -- HTML
 	html = {},
+  -- JSON
 	jsonls = {},
-  ts_ls = {},
+  -- C/C++
   clangd = {},
 }
 
@@ -167,63 +191,70 @@ local on_attach = function(_, bufnr)
 		vim.keymap.set("n", keys, func, { buffer = bufnr, desc = desc })
 	end
 
-	-- Theme, colors and gui
+  ------------------------
+  -- ACTIONS
+  ------------------------
 	nmap("<leader>rn", vim.lsp.buf.rename, "[R]e[n]ame")
 	nmap("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction")
-
-	nmap("gd", vim.lsp.buf.definition, "[G]oto [D]efinition")
-	nmap("gr", require("telescope.builtin").lsp_references, "[G]oto [R]eferences")
-	nmap("gI", vim.lsp.buf.implementation, "[G]oto [I]mplementation")
-	nmap("<leader>D", vim.lsp.buf.type_definition, "Type [D]efinition")
-	nmap("<leader>ds", require("telescope.builtin").lsp_document_symbols, "[D]ocument [S]ymbols")
-	nmap("<leader>ws", require("telescope.builtin").lsp_dynamic_workspace_symbols, "[W]orkspace [S]ymbols")
-
-	-- See `:help K` for why this keymap
-	nmap("K", vim.lsp.buf.hover, "Hover Documentation")
-	nmap("<C-k>", vim.lsp.buf.signature_help, "Signature Documentation")
-
-	-- Lesser used LSP functionality
-	nmap("gD", vim.lsp.buf.declaration, "[G]oto [D]eclaration")
 	nmap("<leader>wa", vim.lsp.buf.add_workspace_folder, "[W]orkspace [A]dd Folder")
 	nmap("<leader>wr", vim.lsp.buf.remove_workspace_folder, "[W]orkspace [R]emove Folder")
 	nmap("<leader>wl", function()
 		print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
 	end, "[W]orkspace [L]ist Folders")
+  nmap("<leader>f", function()
+    vim.lsp.buf.format()
+  end, "[F]ormat buffer with LSP")
 
-	-- Create a command `:Format` local to the LSP buffer
-	vim.api.nvim_buf_create_user_command(bufnr, "Format", function(_)
-		vim.lsp.buf.format()
-	end, { desc = "Format current buffer with LSP" })
+  ------------------------
+  -- MOTIONS
+  ------------------------
+	nmap("gd", vim.lsp.buf.definition, "[G]oto [D]efinition")
+	nmap("gr", require("telescope.builtin").lsp_references, "[G]oto [R]eferences")
+	nmap("gI", vim.lsp.buf.implementation, "[G]oto [I]mplementation")
+	nmap("gD", vim.lsp.buf.declaration, "[G]oto [D]eclaration")
+
+  ------------------------
+  -- DOC
+  ------------------------
+	nmap("<leader>D", vim.lsp.buf.type_definition, "Type [D]efinition")
+	nmap("<leader>ds", require("telescope.builtin").lsp_document_symbols, "[D]ocument [S]ymbols")
+	nmap("<leader>ws", require("telescope.builtin").lsp_dynamic_workspace_symbols, "[W]orkspace [S]ymbols")
+	nmap("K", vim.lsp.buf.hover, "Hover Documentation")
+	nmap("<C-k>", vim.lsp.buf.signature_help, "Signature Documentation")
 end
 
 require('mason').setup()
-local mason_lspconfig = require('mason-lspconfig');
-local lspconfig = require("lspconfig")
 mason_lspconfig.setup({
   ensure_installed = vim.tbl_keys(servers),
 })
 
--- Use a loop to conveniently install and call 'setup' on multiple servers and
--- map buffer local keybindings when the language server attaches
+-- Attach servers
 for server_name, server_opts in pairs(servers) do
+  if server_name == "ts_ls" then
+    -- For typescript-language-server, avoid duplicate servers attaches
+    -- We do not attach the server manually, as it somehow auto-attaches by itself
+    goto continue
+  end
   lspconfig[server_name].setup(vim.tbl_deep_extend("force", {
     on_attach = on_attach,
     capabilities = capabilities,
   }, server_opts))
+  ::continue::
 end
+
 
 -- Diagnostic popups for linting errors
 vim.diagnostic.config({
-  virtual_text = false,      -- disables inline text, optional
-  signs = true,              -- keep E/W signs
-  underline = true,          -- underline problematic code
-  update_in_insert = false,  -- don't update while typing
-  severity_sort = true,      -- sort errors by severity
+  virtual_text = false,
+  signs = true,
+  underline = true,
+  severity_sort = true,
   float = {
-    source = "always",       -- show which LSP source (eslint, pyright, etc.)
-    border = "rounded",      -- rounded border for the popup
+    source = "always",
+    border = "rounded",
   },
 })
+
 -- Show diagnostic when cursor hovers over problematic section of code
 local float_win = nil
 
@@ -329,19 +360,35 @@ null_ls.setup({
 		end
 	end,
 	sources = {
-		null_ls.builtins.formatting.prettier.with({
-			extra_filetypes = { "xml", "md" },
-      prefer_local = "node_modules/.bin"
-		}),
-    -- ESLint for formatting and auto-fix
-    require("none-ls.formatting.eslint_d").with({
-      prefer_local = "node_modules/.bin"
+    -- biome only if biome is configured for project
+    null_ls.builtins.formatting.biome.with({
+        condition = function(utils)
+            return utils.root_has_file({ "biome.json" })
+        end,
+        prefer_local = "node_modules/.bin"
     }),
+    -- eslint only if eslint is configured for project
+    require("none-ls.formatting.eslint_d").with({
+        condition = function(utils)
+            return utils.root_has_file({ ".eslintrc.js", ".eslintrc.json", ".eslintrc.cjs", "eslint.config.js" })
+        end,
+        prefer_local = "node_modules/.bin"
+    }),
+    -- Python
 		null_ls.builtins.formatting.black,
 		null_ls.builtins.formatting.djlint,
 		null_ls.builtins.formatting.isort,
 		null_ls.builtins.diagnostics.djlint,
 		null_ls.builtins.diagnostics.pylint,
+    -- Prettier
+    null_ls.builtins.formatting.prettier.with({
+			extra_filetypes = { "xml", "md" },
+      prefer_local = "node_modules/.bin",
+      -- Do not run if biome or eslint are configured
+      condition = function(utils)
+          return not utils.root_has_file({ ".eslintrc.js", ".eslintrc.json", ".eslintrc.cjs", "eslint.config.js", "biome.json" })
+      end,
+		}),
 	},
 })
 EOF
