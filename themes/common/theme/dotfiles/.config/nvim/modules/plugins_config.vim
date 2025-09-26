@@ -362,7 +362,7 @@ null_ls.setup({
 		end
 	end,
 	sources = {
-    -- biome only if eslint is configured for project
+    -- biome only if biome is configured for project
     null_ls.builtins.formatting.biome.with({
         condition = function(utils)
             return utils.root_has_file({ "biome.json" })
