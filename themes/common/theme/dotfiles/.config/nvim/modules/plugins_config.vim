@@ -119,39 +119,22 @@ let g:vimtex_view_general_viewer = 'zathura'
 
 lua << EOF
 local servers = {
+  -- Python
 	pyright = {},
-	eslint = {
-		codeAction = {
-			disableRuleComment = {
-				enable = true,
-				location = "separateLine",
-			},
-			showDocumentation = {
-				enable = true,
-			},
-		},
-		codeActionOnSave = {
-			enable = false,
-			mode = "all",
-		},
-		format = false,
-		nodePath = "",
-		onIgnoredFiles = "off",
-		packageManager = "npm",
-		quiet = false,
-		rulesCustomizations = {},
-		run = "onType",
-		useESLintClass = false,
-		validate = "on",
-		workingDirectory = {
-			mode = "location",
-		},
-	},
-	bashls = {},
-	cssls = {},
-	html = {},
-	jsonls = {},
+  -- TS/JS/TSX/JSX
+  biome = {
+    cmd = { "biome", "lsp-proxy" },
+  },
   ts_ls = {},
+  -- Bash
+	bashls = {},
+  -- CSS
+	cssls = {},
+  -- HTML
+	html = {},
+  -- JSON
+	jsonls = {},
+  -- C/C++
   clangd = {},
 }
 
@@ -211,6 +194,7 @@ for server_name, server_opts in pairs(servers) do
     capabilities = capabilities,
   }, server_opts))
 end
+
 
 -- Diagnostic popups for linting errors
 vim.diagnostic.config({
@@ -329,14 +313,11 @@ null_ls.setup({
 		end
 	end,
 	sources = {
-		null_ls.builtins.formatting.prettier.with({
+    null_ls.builtins.formatting.biome,
+    null_ls.builtins.formatting.prettier.with({
 			extra_filetypes = { "xml", "md" },
       prefer_local = "node_modules/.bin"
 		}),
-    -- ESLint for formatting and auto-fix
-    require("none-ls.formatting.eslint_d").with({
-      prefer_local = "node_modules/.bin"
-    }),
 		null_ls.builtins.formatting.black,
 		null_ls.builtins.formatting.djlint,
 		null_ls.builtins.formatting.isort,
