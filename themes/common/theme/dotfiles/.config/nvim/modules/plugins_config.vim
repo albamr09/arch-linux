@@ -334,6 +334,7 @@ local lsp_formatting = function(bufnr)
 			-- Ignore formatting from these LSPs
 			local lsp_formatting_denylist = {
 				eslint = true,
+        biome = true,
 			}
 			if lsp_formatting_denylist[client.name] then
 				return false
@@ -376,10 +377,6 @@ null_ls.setup({
     }),
     -- Python
 		null_ls.builtins.formatting.black,
-		null_ls.builtins.formatting.djlint,
-		null_ls.builtins.formatting.isort,
-		null_ls.builtins.diagnostics.djlint,
-		null_ls.builtins.diagnostics.pylint,
     -- Prettier
     null_ls.builtins.formatting.prettier.with({
 			extra_filetypes = { "xml", "md" },
