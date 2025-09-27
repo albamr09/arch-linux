@@ -43,12 +43,6 @@ configure_nvim() {
 
     title_msg "Configuring neovim"
 
-    title_msg "Configuring virtualenv"
-    # Virtualenvs for python
-    execute mkdir -p /home/$USER/.virtualenvs && cd /home/$USER/.virtualenvs
-    execute python -m venv debugpy
-    execute /home/$USER/.virtualenvs/debugpy/bin/pip3 install debugpy && cd /$INSTALL_FOLDER/chroot
-
     title_msg "Installing plugin manager"
     execute curl -fLo /home/$USER/.local/share/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
