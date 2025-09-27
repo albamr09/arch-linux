@@ -27,9 +27,6 @@ Plug 'hrsh7th/nvim-cmp'
 Plug 'hrsh7th/cmp-nvim-lsp'
 Plug 'windwp/nvim-autopairs'
 
-" Snippet engine
-Plug 'L3MON4D3/LuaSnip'
-
 " Themes
 Plug {{ (datasource "variables").nvim.theme }}
 
