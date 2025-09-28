@@ -340,7 +340,7 @@ null_ls.setup({
 	sources = {
     -- Prettier
     null_ls.builtins.formatting.prettier.with({
-			filetypes = { "markdown", "xml", "html", "json", "yaml" },
+			filetypes = { "markdown", "xml", "yaml" },
       prefer_local = "node_modules/.bin",
 		}),
 	},
