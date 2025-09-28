@@ -10,7 +10,6 @@
 "
 "---------------------------------------------------------------
 
-
 " --------------- ] File Explorer [  --------------- 
 
 let g:NERDTreeShowHidden = 1
@@ -124,12 +123,6 @@ local lspconfig = require("lspconfig")
 local servers = {
   -- Python
 	pyright = {},
-	ruff = {
-    -- Set root dir to wherever these files are
-    root_dir = function(fname)
-      return lspconfig.util.root_pattern("venv", "requirements.txt")(fname)
-    end,
-  },
   -- TS/JS
   -- We keep it here to ensure it is installed
   ts_ls = {},
@@ -176,6 +169,25 @@ local on_attach = function(_, bufnr)
 		vim.keymap.set("n", keys, func, { buffer = bufnr, desc = desc })
 	end
 
+  -- Formatting function
+  local function lsp_format()
+    vim.lsp.buf.format({
+      filter = function(client)
+        -- Get all clients attached to current buffer
+        local clients = vim.lsp.get_clients({bufnr = bufnr})
+        local client_names = vim.tbl_map(function(c) return c.name end, clients)
+        
+        -- Prioritize biome/eslint over ts_ls
+        return client.name == "biome"
+            or client.name == "eslint"
+            or (client.name == "ts_ls" 
+                and not vim.tbl_contains(client_names, "biome") 
+                and not vim.tbl_contains(client_names, "eslint"))
+      end,
+      bufnr = bufnr,
+    })
+  end
+
   ------------------------
   -- ACTIONS
   ------------------------
@@ -186,9 +198,7 @@ local on_attach = function(_, bufnr)
 	nmap("<leader>wl", function()
 		print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
 	end, "[W]orkspace [L]ist Folders")
-  nmap("<leader>f", function()
-    vim.lsp.buf.format()
-  end, "[F]ormat buffer with LSP")
+  nmap("<leader>f", lsp_format, "[F]ormat buffer with LSP")
 
   ------------------------
   -- MOTIONS
@@ -212,11 +222,9 @@ local on_attach = function(_, bufnr)
   ------------------------
   -- Autoformat on save
   vim.api.nvim_create_autocmd("BufWritePre", {
-  	group = augroup,
-  	buffer = bufnr,
-  	callback = function()
-      vim.lsp.buf.format();
-  	end,
+    group = vim.api.nvim_create_augroup("LspFormat", { clear = true }),
+    buffer = bufnr,
+    callback = lsp_format,
   })
 end
 
