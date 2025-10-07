@@ -123,12 +123,6 @@ local lspconfig = require("lspconfig")
 local servers = {
   -- Python
 	pyright = {},
- 	ruff = {
-    -- Set root dir to wherever these files are
-    root_dir = function(fname)
-      return lspconfig.util.root_pattern("venv", "requirements.txt")(fname)
-    end,
-  },
   -- TS/JS
   -- We keep it here to ensure it is installed
   ts_ls = {},
@@ -349,6 +343,8 @@ null_ls.setup({
 			filetypes = { "markdown", "xml", "yaml" },
       prefer_local = "node_modules/.bin",
 		}),
+    -- Python
+    null_ls.builtins.formatting.black,
 	},
 })
 EOF
