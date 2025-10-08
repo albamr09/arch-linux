@@ -150,11 +150,7 @@ local servers = {
   -- JSON
 	jsonls = {},
   -- C/C++
-  clangd = {},
-  -- Markdown
-  marksman = {},
-  -- Latex
-  ltex = {},
+  clangd = {}
 }
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()
