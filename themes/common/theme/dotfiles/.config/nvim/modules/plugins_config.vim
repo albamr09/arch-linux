@@ -184,6 +184,7 @@ local on_attach = function(_, bufnr)
                 and not vim.tbl_contains(client_names, "eslint"))
       end,
       bufnr = bufnr,
+      async = true
     })
   end
 
@@ -237,15 +238,17 @@ local on_attach = function(_, bufnr)
   -- Automatic actions
   ------------------------
   -- Autoformat on save
+  local format_group = vim.api.nvim_create_augroup("LspFormat", { clear = true })
   vim.api.nvim_create_autocmd("BufWritePre", {
-    group = vim.api.nvim_create_augroup("LspFormat", { clear = true }),
+    group = format_group,
     buffer = bufnr,
     callback = lsp_format,
   })
 
   -- Biome fixAll on save
+  local biome_autofix_group = vim.api.nvim_create_augroup("BiomeFixAll", { clear = true })
   vim.api.nvim_create_autocmd("BufWritePre", {
-    group = vim.api.nvim_create_augroup("BiomeFixAll", { clear = true }),
+    group = biome_autofix_group,
     buffer = bufnr,
     callback = function()
       local clients = vim.lsp.get_clients({ name = "biome", buf = bufnr })
