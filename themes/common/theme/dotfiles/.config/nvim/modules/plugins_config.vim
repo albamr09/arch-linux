@@ -102,6 +102,9 @@ require'telescope'.setup{
     file_ignore_patterns = { 'node_modules' }
   }
 }
+
+-- Integrate lsp code-actions
+require"telescope".load_extension("ui-select")
 EOF
 
 " -------------- ] Markdown Preview [ ----------------
@@ -184,11 +187,28 @@ local on_attach = function(_, bufnr)
     })
   end
 
+  -- Wrapper to include source-level code actions
+  local function code_actions_with_source_whole_file()
+    vim.lsp.buf.code_action({
+      context = {
+        -- Include source actions
+        only = {
+          "source",               
+          "source.fixAll",       
+          "source.organizeImports",
+        }
+      },
+      -- Apply to whole file
+      range = nil
+    })
+  end
+
   ------------------------
   -- ACTIONS
   ------------------------
 	nmap("<leader>rn", vim.lsp.buf.rename, "[R]e[n]ame")
-	nmap("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction")
+  nmap("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction (under cursor)")
+  nmap("<leader>cA", code_actions_with_source_whole_file, "[C]ode [A]ction (whole file)")
 	nmap("<leader>wa", vim.lsp.buf.add_workspace_folder, "[W]orkspace [A]dd Folder")
 	nmap("<leader>wr", vim.lsp.buf.remove_workspace_folder, "[W]orkspace [R]emove Folder")
 	nmap("<leader>wl", function()
@@ -222,6 +242,23 @@ local on_attach = function(_, bufnr)
     buffer = bufnr,
     callback = lsp_format,
   })
+
+  -- Biome fixAll on save
+  vim.api.nvim_create_autocmd("BufWritePre", {
+    group = vim.api.nvim_create_augroup("BiomeFixAll", { clear = true }),
+    buffer = bufnr,
+    callback = function()
+      local clients = vim.lsp.get_clients({ name = "biome", buf = bufnr })
+      if #clients == 0 then return end
+      vim.lsp.buf.code_action({ 
+        -- Execute fixAll code action
+        context = { only = { "source.fixAll.biome" } },  
+        -- Apply without user query
+        apply = true
+      })
+    end,
+  })
+
 end
 
 require('mason').setup()
@@ -340,7 +377,7 @@ null_ls.setup({
       prefer_local = "node_modules/.bin",
 		}),
     -- Python
-    null_ls.builtins.formatting.black,
+    null_ls.builtins.formatting.black
 	},
 })
 EOF

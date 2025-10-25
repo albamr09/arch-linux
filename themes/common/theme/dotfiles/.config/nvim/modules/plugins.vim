@@ -60,6 +60,8 @@ Plug 'karb94/neoscroll.nvim'
 " File search
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
+" Integrate lsp code-actions
+Plug 'nvim-telescope/telescope-ui-select.nvim'
 
 " Smooth scrolling
 Plug 'karb94/neoscroll.nvim'
