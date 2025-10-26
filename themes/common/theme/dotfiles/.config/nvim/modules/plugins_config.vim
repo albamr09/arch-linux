@@ -226,6 +226,13 @@ local on_attach = function(_, bufnr)
 	nmap("gD", vim.lsp.buf.declaration, "[G]oto [D]eclaration")
 
   ------------------------
+  -- Diagnostics
+  ------------------------
+  nmap('<leader>do', vim.diagnostic.open_float, "[D]iagnostic [O]pen")
+  nmap('<leader>dp', vim.diagnostic.goto_prev, "[D]iagnostic [P]revious")
+  nmap('<leader>dn', vim.diagnostic.goto_next, "[D]iagnostic [N]ext")
+
+  ------------------------
   -- DOC
   ------------------------
 	nmap("<leader>D", vim.lsp.buf.type_definition, "Type [D]efinition")
@@ -282,44 +289,6 @@ for server_name, server_opts in pairs(servers) do
   }, server_opts))
   ::continue::
 end
-
-
--- Diagnostic popups for linting errors
-vim.diagnostic.config({
-  virtual_text = false,
-  signs = true,
-  underline = true,
-  severity_sort = true,
-  float = {
-    source = "always",
-    border = "rounded",
-  },
-})
-
--- Show diagnostic when cursor hovers over problematic section of code
-local float_win = nil
-
-local function show_cursor_diagnostic()
-  -- Close any existing float first
-  if float_win and vim.api.nvim_win_is_valid(float_win) then
-    vim.api.nvim_win_close(float_win, true)
-    float_win = nil
-  end
-
-  -- Only open if there are diagnostics under cursor
-  local opts = {
-    focusable = false,
-    scope = "cursor",
-    close_events = { "CursorMoved", "BufLeave", "InsertEnter", "WinScrolled" },
-  }
-
-  float_win = vim.diagnostic.open_float(nil, opts)
-end
-
-vim.api.nvim_create_autocmd("CursorHold", {
-  pattern = "*",
-  callback = show_cursor_diagnostic,
-})
 EOF
 
 " -------------- ] Autocompletion [ ----------------
