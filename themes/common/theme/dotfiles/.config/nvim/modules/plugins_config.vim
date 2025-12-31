@@ -25,17 +25,19 @@ let g:NERDTreeGitStatusUseNerdFonts = 1
 " ------------------ ] Tree Sitter [ --------------------
 
 lua <<EOF
-require'nvim-treesitter.configs'.setup {
+local neovim_treesitter = require'nvim-treesitter';
+neovim_treesitter.setup({
   highlight = {
     enable = true,
-    disable = {},
+    disable = {}
   },
   indent = {
     enable = false,
-    disable = {},
+    disable = {}
   },
-  ensure_installed = {
-    "javascript",
+})
+neovim_treesitter.install(
+  { "javascript",
     "json",
     "html",
     "scss",
@@ -56,9 +58,9 @@ require'nvim-treesitter.configs'.setup {
     "kotlin",
     "c_sharp",
     "markdown",
-    "markdown_inline"
-  },
-}
+    "markdown_inline" 
+  }
+)
 EOF
 
 " -------------- ] Integrated Terminal [ ----------------
