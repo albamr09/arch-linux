@@ -35,23 +35,6 @@ configure_packages() {
 
     title_msg "Configuring zsh"
     execute git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
-
-    configure_nvim
-}
-
-configure_nvim() {
-
-    title_msg "Configuring neovim"
-
-    title_msg "Installing plugin manager"
-    execute curl -fLo /home/$USER/.local/share/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-
-    title_msg "Installing LSP dependencies"
-    execute sudo npm install -g prettier eslint_d @biomejs/biome
-
-    title_msg "Installing tree-sitter dependencies"
-    # Avoid tree sitter executable errors (only for latex)
-    execute sudo npm install -g tree-sitter-cli
 }
 
 copy_dotfiles() {
@@ -71,16 +54,9 @@ copy_dotfiles() {
     title_msg "Copying dotfiles for $USER"
 
     execute sudo cp -r --preserve=ownership "$DIR_DOTFILES/.??*" "/home/$USER"
-    # Needed so telescope installs successfully, will be copied again after plugins are installed
-    execute rm -rf "/home/$USER/.vim"
 }
 
 install_plugins() {
-
-    title_msg "Installing neovim plugins"
-    nvim --headless +PlugInstall +qall 2> /dev/null
-    # Copy dotfiles for telescope that we removed earlier
-    execute cp -rf -r $DIR_DOTFILES/.vim /home/$USER
 
     title_msg "Installing tmux plugins"
     execute ~/.tmux/plugins/tpm/bin/install_plugins

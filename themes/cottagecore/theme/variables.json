@@ -1,8 +1,7 @@
 {
     "nvim": {
         "theme": "'EdenEast/nightfox.nvim'",
-        "colorscheme": "nightfox",
-        "lualine_theme": "palenight"
+        "colorscheme": "nightfox"
     },
     "dunst": {
         "font": "JetBrains Mono NL 10",

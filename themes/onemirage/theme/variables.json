@@ -2,8 +2,7 @@
     "nvim": {
         "theme": "'ayu-theme/ayu-vim'",
         "colorscheme": "ayu",
-        "palette": "let ayucolor=\"mirage\"",
-        "lualine_theme": "dracula"
+        "palette": "vim.g.ayucolor = \"mirage\""
     },
     "dunst": {
         "font": "Input Nerd Font 9",
