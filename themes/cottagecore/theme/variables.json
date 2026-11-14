@@ -1,6 +1,6 @@
 {
     "nvim": {
-        "theme": "'EdenEast/nightfox.nvim'",
+        "theme": "EdenEast/nightfox.nvim",
         "colorscheme": "nightfox"
     },
     "dunst": {

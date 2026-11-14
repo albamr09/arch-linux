@@ -1,6 +1,6 @@
 {
   "nvim": {
-    "theme": "'hardhackerlabs/theme-vim', { 'as': 'hardhacker' }",
+    "theme": "hardhackerlabs/theme-vim",
     "colorscheme": "hardhacker"
   },
   "dunst": {

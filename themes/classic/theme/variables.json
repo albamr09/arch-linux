@@ -1,6 +1,6 @@
 {
     "nvim": {
-        "theme": "'kinoute/vim-hivacruz-theme'",
+        "theme": "kinoute/vim-hivacruz-theme",
         "colorscheme": "hivacruz"
     },
     "dunst": {
