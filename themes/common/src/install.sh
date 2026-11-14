@@ -35,6 +35,9 @@ configure_packages() {
 
     title_msg "Configuring zsh"
     execute git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+
+    title_msg "Configuring neovim"
+    execute sudo pacman -Sy tree-sitter-cli
 }
 
 copy_dotfiles() {
